@@ -2,7 +2,7 @@ SnapShooter
 ===========
 Create a snapshot of a domain at a point in time.
 
-Snapshooter collects information about a set of domains using zerorpc to distribute asynchronous requests to workers. 
+Snapshooter collects information about a set of domains using rabbitmq to distribute asynchronous requests to workers. 
 Workers try their best to collect data. Results are returned as JSON documents.
 Collectable artifacts includes each domain's:
 - TLD, domain, and other labels
@@ -20,20 +20,14 @@ Installation
 ------------
 System libraries (Ubuntu)
 ```
-aptitude install -y python-virtualenv python-dev libadns1-dev libffi-dev libtool automake
-wget http://download.zeromq.org/zeromq-4.1.0-rc1.tar.gz
-tar zxf zeromq-*
-cd zeromq-*
-./configure --prefix=/opt/zeromq
-make 
-make install
+aptitude install -y python-virtualenv python-dev rabbitmq-server
 ```
 
 Python modules
 ```
 virtualenv ./venv
 source venv/bin/activate
-pip install -r requirements.txt --allow-external adns-python --allow-unverified adns-python
+pip install -r requirements.txt
 ```
 
 Extra Data
@@ -44,7 +38,7 @@ wget https://gist.githubusercontent.com/anthonykasza/44633151851154ccb735/raw/2b
 Usage
 -----
 Run the client and each worker on systems with unique public IP addresses to avoid Whois throttling. 
-Configure zerorpc sockets in client and worker files to match. 
+Configure rabbitmq hosts in client and worker files to match. 
 
 Start workers. Run client.
 ```
@@ -68,6 +62,4 @@ Known Limitations
 This project is to be considered a prototype. And as such...
 - pywhois doesn't work with all whois formats
     - the raw whois document is returned from workers as well as the parsed version
-- zerorpc doesn't offer encryption or authentication by default
-    - zeromq DOES offer encryption and authentication but isn't incorporated into this project
-    - a cheap solution I found for my implementation was to set up a VPN between all workers and clients
+- thorough testing with rabbitmq has not been done
